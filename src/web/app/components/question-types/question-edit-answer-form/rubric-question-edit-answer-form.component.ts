@@ -7,6 +7,8 @@ import {
 } from '../../../../types/default-question-structs';
 import { RUBRIC_ANSWER_NOT_CHOSEN } from '../../../../types/feedback-response-details';
 import { QuestionEditAnswerFormComponent } from './question-edit-answer-form';
+import {SimpleModalService} from '../../../../services/simple-modal.service';
+import { SimpleModalType } from '../../simple-modal/simple-modal-type';
 
 /**
  * The rubric question submission form for a recipient.
@@ -30,9 +32,9 @@ export class RubricQuestionEditAnswerFormComponent extends QuestionEditAnswerFor
   // constant
   readonly RUBRIC_ANSWER_NOT_CHOSEN: number = RUBRIC_ANSWER_NOT_CHOSEN;
 
-  constructor() {
-    super(DEFAULT_RUBRIC_QUESTION_DETAILS(), DEFAULT_RUBRIC_RESPONSE_DETAILS());
-  }
+  constructor(
+  private simpleModalService: SimpleModalService
+  )  {super(DEFAULT_RUBRIC_QUESTION_DETAILS(), DEFAULT_RUBRIC_RESPONSE_DETAILS());}
 
   /**
    * Selects an answer.
@@ -71,4 +73,16 @@ export class RubricQuestionEditAnswerFormComponent extends QuestionEditAnswerFor
   getInputId(id: String, row: Number, col: Number, platform: String): String {
     return `${id}-row${row}-col${col}-${platform}`;
   }
+
+  resetRubricHandler(): void {
+    this.simpleModalService.openConfirmationModal(`Reset rubric selections to empty?`,
+        SimpleModalType.WARNING,
+        'Resetting the rubric selections to empty will clear any selections made, you can re-select your answers after',
+    ).result.then(() => {
+      let newAnswer: number[] = [];
+      newAnswer = Array(this.questionDetails.rubricSubQuestions.length).fill(RUBRIC_ANSWER_NOT_CHOSEN);
+      this.triggerResponseDetailsChange('answer', newAnswer);
+    }, () => {});
+  }
+
 }
