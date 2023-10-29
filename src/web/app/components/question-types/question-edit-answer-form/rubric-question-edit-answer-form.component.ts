@@ -74,6 +74,9 @@ export class RubricQuestionEditAnswerFormComponent extends QuestionEditAnswerFor
     return `${id}-row${row}-col${col}-${platform}`;
   }
 
+  /**
+  * Handles reset rubric button click event.
+  */
   resetRubricHandler(): void {
     this.simpleModalService.openConfirmationModal(`Reset rubric selections to empty?`,
         SimpleModalType.WARNING,
